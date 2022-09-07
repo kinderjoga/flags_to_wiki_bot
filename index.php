@@ -34,7 +34,7 @@ if (!empty($data['message']['text'])) {
         messageToTelegram($bot_token, $chat_id, $text_return);
         setBotState($chat_id, '');
     } else {
-        if ($text == '/help') {
+        if ($text == '/help' | !preg_match('(/help|/all|/about|/country)', $text)) {
             $text_return = <<<TEXT
             Привет, {$first_name} {$last_name}, вот команды, что я понимаю: 
             /help - список команд

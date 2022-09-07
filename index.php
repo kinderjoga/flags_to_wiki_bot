@@ -113,7 +113,13 @@ function getInfo(string $country): string
         $emoji = new Emoji;
         $text = "Флаг страны {$emoji->countryFlag($countryCode)}\n$url";
     } catch (\Throwable) {
-        $text = "Страна с название \"{$country}\" не найдена в списке.\nПопробуйте снова!";
+        $otherCountry = getOtherCountry($country);
+        $text = <<<TEXT
+        Страна с название \"{$country}\" не найдена в списке.
+    Возможно вы имели ввиду одну из следующих стран:
+    {$otherCountry}
+    Попробуйте снова!";
+    TEXT;
     }
 
     return $text;
@@ -125,5 +131,18 @@ function getAllCountry(): string
     foreach (Countries::cases() as $value) {
         $result .= "{$value->value}\n";
     }
+    return $result;
+}
+
+function getOtherCountry($wrongCountryName): string
+{
+    $result = '';
+    foreach (Countries::cases() as $value) {
+        similar_text($value->value, $wrongCountryName, $pers);
+        if ((int)$pers > 60) {
+            $result .= "{$value->value}\n";
+        }
+    }
+
     return $result;
 }
